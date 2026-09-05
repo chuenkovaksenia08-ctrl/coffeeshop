@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CoffeeShop - магазин кофе с доставкой</title>
+    <style>
+        /*ОБЩИЙ СТИЛЬ И АДАПТИВНОСТЬ  */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #faf7f2;
+            color: #3e2c1f;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Шапка */
+        header {
+            background: #5d3a1a;
+            color: white;
+            padding: 20px;
+            border-radius: 28px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo span {
+            font-size: 32px;
+        }
+
+        .cart-icon {
+            background: #e6b17e;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: #3e2c1f;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-icon:hover {
+            background: #f2c94c;
+            transform: scale(1.02);
+        }
+
+        /* Основная сетка */
+        .shop-layout {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Боковая панель ФИЛЬТРЫ */
+        .filters-sidebar {
+            flex: 1;
+            min-width: 240px;
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .filter-group {
+            margin-bottom: 25px;
+        }
+
+        .filter-group h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            border-left: 5px solid #d48f3b;
+            padding-left: 12px;
+        }
+
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            background: #fff9f0;
+            font-size: 15px;
+        }
+
+        /* Карточки товаров */
+        .products-grid {
+            flex: 3;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 28px;
+            padding: 18px;
+            transition: 0.2s;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+            border: 1px solid #efebe5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .product-img {
+            font-size: 60px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .product-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .product-type {
+            color: #b97f44;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .product-details {
+            font-size: 14px;
+            color: #5c4b38;
+            margin: 8px 0;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #a7582c;
+            margin: 12px 0;
+        }
+
+        .add-to-cart {
+            background: #5d3a1a;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: auto;
+        }
+
+        .add-to-cart:hover {
+            background: #7b4a24;
+        }
+
+        /* Корзина (модалка) */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .cart-content {
+            background: #fff6ed;
+            max-width: 500px;
+            width: 90%;
+            border-radius: 40px;
+            padding: 25px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #e2cfb5;
+            padding: 12px 0;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .order-form input {
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 30px;
+            border: 1px solid #d4bc9a;
+        }
+
+        .btn-order {
+            background: #2e7d32;
+            width: 100%;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            border: none;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .btn-order:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .warning {
+            color: #c7254e;
+            font-size: 13px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* SVG-анимация (грузовик) */
+        .truck-animation {
+            position: fixed;
+            bottom: 30px;
+            left: -350px;
+            z-index: 1050;
+            background: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            pointer-events: none;
+            transition: left 0.02s linear;
+        }
+
+        .truck-animation.show {
+            display: flex;
+        }
+
+        @media (max-width: 760px) {
+            .shop-layout {
+                flex-direction: column;
+            }
+            .cart-icon {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <header>
+        <div class="logo">
+            <span>☕</span> CoffeeShop
+        </div>
+        <div class="cart-icon" @click="openCart">
+            🛒 Корзина (<span>{{ cartTotalCount }}</span>)
+        </div>
+    </header>
+
+    <div class="shop-layout">
+        <!-- ФИЛЬТРАЦИЯ -->
+        <div class="filters-sidebar">
+            <h3>📋 Фильтры</h3>
+            <div class="filter-group">
+                <h3>Тип кофе</h3>
+                <select v-model="filters.type">
+                    <option value="">Все</option>
+                    <option value="зерновой">Зерновой</option>
+                    <option value="молотый">Молотый</option>
+                    <option value="растворимый">Растворимый</option>
+                    <option value="капсулы">Капсулы</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <h3>Объем (г)</h3>
+                <input type="number" v-model.number="filters.volume" placeholder="Любой" min="0">
+            </div>
+            <div class="filter-group">
+                <h3>Макс. цена</h3>
+                <input type="number" v-model.number="filters.maxPrice" placeholder="Любая" min="0">
+            </div>
+            <div class="filter-group">
+                <h3>Сорт/Обжарка</h3>
+                <select v-model="filters.roast">
+                    <option value="">Любая</option>
+                    <option value="светлая">Светлая</option>
+                    <option value="средняя">Средняя</option>
+                    <option value="темная">Темная</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Список товаров -->
+        <div class="products-grid">
+            <div class="product-card" v-for="product in filteredProducts" :key="product.id">
+                <div class="product-img">☕</div>
+                <div class="product-title">{{ product.name }}</div>
+                <div class="product-type">{{ product.type }} / {{ product.roast }} обжарка</div>
+                <div class="product-details">📦 Объем: {{ product.volume }} г</div>
+                <div class="price">{{ product.price }} ₽</div>
+                <div class="product-details">📦 В наличии: {{ product.stock }} шт</div>
+                <button class="add-to-cart" @click="addToCart(product)">➕ Добавить в корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка Корзины + Оформление заказа -->
+    <div class="cart-modal" ref="cartModal">
+        <div class="cart-content">
+            <h2>🛍️ Ваша корзина</h2>
+            <div v-if="cartItems.length === 0">Корзина пуста</div>
+            <div v-for="(item, idx) in cartItems" :key="idx" class="cart-item">
+                <div><strong>{{ item.name }}</strong> ({{ item.volume }}г) x {{ item.quantity }}</div>
+                <div>{{ item.price * item.quantity }} ₽</div>
+                <div style="display: flex; gap: 10px;">
+                    <button @click="changeQuantity(idx, -1)">−</button>
+                    <span>{{ item.quantity }}</span>
+                    <button @click="changeQuantity(idx, 1)">+</button>
+                    <button @click="removeItem(idx)">🗑️</button>
+                </div>
+            </div>
+            <hr>
+            <div><strong>Итого: {{ totalCartPrice }} ₽</strong></div>
+            
+            <!-- Форма оформления заказа -->
+            <div class="order-form">
+                <h3>📦 Данные для доставки</h3>
+                <input type="text" v-model="orderData.name" placeholder="Ваше имя">
+                
+                <input type="text" v-model="orderData.address" placeholder="Адрес доставки">
+                
+                <!-- Поле телефона: только цифры, maxlength 11 -->
+                <input type="tel" v-model="orderData.phone" @input="validatePhone" placeholder="Телефон (11 цифр)" maxlength="11">
+                <div class="warning" v-if="phoneError">{{ phoneError }}</div>
+                
+                <button class="btn-order" @click="placeOrder" :disabled="!isFormValid">
+                    ✅ Заказать
+                </button>
+                <button @click="closeCart" style="margin-top: 10px; background:#ad8b66;">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Анимация: грузовик с логотипом, который уезжает -->
+    <div id="truckAnim" class="truck-animation">
+        <svg width="100" height="70" viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
+            <!-- Кузов -->
+            <rect x="15" y="25" width="60" height="30" fill="#8B5A2B" stroke="#5D3A1A" stroke-width="2" rx="3"/>
+            <!-- Кабина -->
+            <rect x="65" y="15" width="35" height="25" fill="#D48F3B" stroke="#5D3A1A" stroke-width="2" rx="3"/>
+            <!-- Колёса -->
+            <circle cx="30" cy="58" r="10" fill="#222" stroke="#111" stroke-width="2"/>
+            <circle cx="75" cy="58" r="10" fill="#222" stroke="#111" stroke-width="2"/>
+            <!-- Логотип магазина (чашка кофе) -->
+            <text x="72" y="33" font-size="14" fill="white" font-weight="bold">☕</text>
+            <text x="18" y="47" font-size="9" fill="white" font-weight="bold">CoffeeShop</text>
+        </svg>
+        <span style="font-weight: bold;">🚚 Ваш заказ в пути!</span>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+<script>
+    // ТОВАРЫ (массив)
+    const productsArray = [
+        { id: 1, name: "Эфиопия Сидамо", type: "зерновой", volume: 250, price: 890, stock: 12, roast: "светлая" },
+        { id: 2, name: "Колумбия Супремо", type: "зерновой", volume: 500, price: 1450, stock: 8, roast: "средняя" },
+        { id: 3, name: "Молотый Бразилия", type: "молотый", volume: 250, price: 620, stock: 15, roast: "средняя" },
+        { id: 4, name: "Якобс Монарх", type: "растворимый", volume: 95, price: 540, stock: 20, roast: "темная" },
+        { id: 5, name: "Nescafe Gold", type: "растворимый", volume: 190, price: 790, stock: 7, roast: "средняя" },
+        { id: 6, name: "Итальянские капсулы", type: "капсулы", volume: 120, price: 1250, stock: 5, roast: "темная" },
+        { id: 7, name: "Гватемала Антигуа", type: "зерновой", volume: 1000, price: 2350, stock: 3, roast: "светлая" },
+        { id: 8, name: "Молотый Эспрессо", type: "молотый", volume: 300, price: 710, stock: 0, roast: "темная" }
+    ];
+
+    new Vue({
+        el: '#app',
+        data: {
+            products: productsArray,
+            filters: {
+                type: '',
+                volume: null,
+                maxPrice: null,
+                roast: ''
+            },
+            cartItems: [],
+            orderData: {
+                name: '',
+                address: '',
+                phone: ''
+            },
+            truckInterval: null
+        },
+        computed: {
+            // Фильтрация товаров
+            filteredProducts() {
+                return this.products.filter(p => {
+                    if (this.filters.type && p.type !== this.filters.type) return false;
+                    if (this.filters.volume && p.volume !== this.filters.volume) return false;
+                    if (this.filters.maxPrice && p.price > this.filters.maxPrice) return false;
+                    if (this.filters.roast && p.roast !== this.filters.roast) return false;
+                    return true;
+                });
+            },
+            cartTotalCount() {
+                return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            },
+            totalCartPrice() {
+                return this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            },
+            //ВАЛИДАЦИЯ ТЕЛЕФОНА 
+            phoneError() {
+                if (!this.orderData.phone) return '';
+                // Проверяем, что введены только цифры и ровно 11 штук
+                const digitsOnly = this.orderData.phone.replace(/\D/g, '');
+                if (digitsOnly.length === 0) return '';
+                if (digitsOnly.length !== 11) {
+                    return `❌ Номер телефона должен содержать ровно 11 цифр (сейчас ${digitsOnly.length})`;
+                }
+                return '';
+            },
+            // Общая валидация формы
+            isFormValid() {
+                const nameValid = this.orderData.name && this.orderData.name.trim().length > 0;
+                const addressValid = this.orderData.address && this.orderData.address.trim().length > 0;
+                // Проверка телефона: только цифры и ровно 11
+                const phoneDigits = this.orderData.phone ? this.orderData.phone.replace(/\D/g, '') : '';
+                const phoneValid = phoneDigits.length === 11;
+                const cartNotEmpty = this.cartItems.length > 0;
+                
+                return nameValid && addressValid && phoneValid && cartNotEmpty;
+            }
+        },
+        watch: {
+            // Сохраняем корзину в localStorage
+            cartItems: {
+                deep: true,
+                handler(newVal) {
+                    localStorage.setItem('coffee_cart', JSON.stringify(newVal));
+                }
+            },
+            orderData: {
+                deep: true,
+                handler() {
+                    localStorage.setItem('coffee_orderForm', JSON.stringify(this.orderData));
+                }
+            }
+        },
+        mounted() {
+            // Загружаем данные из localStorage
+            const savedCart = localStorage.getItem('coffee_cart');
+            if (savedCart) {
+                try {
+                    this.cartItems = JSON.parse(savedCart);
+                } catch(e) { console.warn(e); }
+            }
+            const savedForm = localStorage.getItem('coffee_orderForm');
+            if (savedForm) {
+                try {
+                    const form = JSON.parse(savedForm);
+                    if (form.name) this.orderData.name = form.name;
+                    if (form.address) this.orderData.address = form.address;
+                    if (form.phone) this.orderData.phone = form.phone;
+                } catch(e) {}
+            }
+        },
+        methods: {
+            //ВАЛИДАЦИЯ ТЕЛЕФОНА 
+            validatePhone(event) {
+                let value = event.target.value;
+                // Удаляем всё, кроме цифр
+                let digits = value.replace(/\D/g, '');
+                // Ограничиваем 11 цифрами
+                if (digits.length > 11) {
+                    digits = digits.slice(0, 11);
+                }
+                this.orderData.phone = digits;
+            },
+            
+            // Добавление в корзину с проверкой остатка
+            addToCart(product) {
+                const existing = this.cartItems.find(i => i.id === product.id);
+                let newQty = existing ? existing.quantity + 1 : 1;
+                if (newQty > product.stock) {
+                    alert(`❌ Недостаточно товара на складе! Доступно: ${product.stock} шт.`);
+                    return;
+                }
+                if (existing) {
+                    existing.quantity = newQty;
+                } else {
+                    this.cartItems.push({ ...product, quantity: 1 });
+                }
+            },
+            
+            // Изменение количества в корзине
+            changeQuantity(idx, delta) {
+                const item = this.cartItems[idx];
+                const newQty = item.quantity + delta;
+                if (newQty < 1) {
+                    this.cartItems.splice(idx, 1);
+                    return;
+                }
+                const originalProduct = this.products.find(p => p.id === item.id);
+                if (originalProduct && newQty > originalProduct.stock) {
+                    alert(`⚠️ Нельзя добавить больше ${originalProduct.stock} шт. (остаток)`);
+                    return;
+                }
+                item.quantity = newQty;
+            },
+            
+            removeItem(idx) {
+                this.cartItems.splice(idx, 1);
+            },
+            
+            openCart() {
+                this.$refs.cartModal.style.display = 'flex';
+            },
+            
+            closeCart() {
+                this.$refs.cartModal.style.display = 'none';
+            },
+            
+            //ОФОРМЛЕНИЕ ЗАКАЗА
+            // Грузовик выезжает СРАЗУ после нажатия, окно не закрывается
+            placeOrder() {
+                // Проверяем валидность формы
+                if (!this.isFormValid) {
+                    let msg = "❌ Ошибка в данных:\n";
+                    if (!this.orderData.name) msg += "- Введите имя\n";
+                    if (!this.orderData.address) msg += "- Введите адрес\n";
+                    const phoneDigits = this.orderData.phone ? this.orderData.phone.replace(/\D/g, '') : '';
+                    if (phoneDigits.length !== 11) msg += "- Телефон: ровно 11 цифр (только цифры)\n";
+                    if (this.cartItems.length === 0) msg += "- Корзина пуста\n";
+                    alert(msg);
+                    return;
+                }
+                
+                // 1. ЗАПУСКАЕМ АНИМАЦИЮ ГРУЗОВИКА
+                this.startTruckAnimation();
+                
+                // 2. Сохраняем заказ в localStorage
+                const orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+                const newOrder = {
+                    id: Date.now(),
+                    items: [...this.cartItems],
+                    customer: { 
+                        name: this.orderData.name, 
+                        address: this.orderData.address, 
+                        phone: this.orderData.phone 
+                    },
+                    total: this.totalCartPrice,
+                    date: new Date().toLocaleString()
+                };
+                orderHistory.push(newOrder);
+                localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+                
+                // 3. Очищаем корзину, но НЕ закрываем окно (чтобы пользователь видел, что заказ оформлен)
+                this.cartItems = [];
+                
+                // 4. Показываем уведомление об успехе (окно корзины остаётся открытым)
+                alert("🎉 Заказ оформлен! Грузовик с вашим кофе уже выехал!");
+                
+             
+            },
+            
+            //АНИМАЦИЯ ГРУЗОВИКА 
+            startTruckAnimation() {
+                const truckDiv = document.getElementById('truckAnim');
+                if (!truckDiv) return;
+                
+                // Сбрасываем позицию и показываем
+                truckDiv.style.display = 'flex';
+                truckDiv.style.left = '-350px';
+                
+                let pos = -350;
+                // Очищаем предыдущий интервал, если был
+                if (this.truckInterval) clearInterval(this.truckInterval);
+                
+                // Анимация движения
+                this.truckInterval = setInterval(() => {
+                    pos += 7;
+                    truckDiv.style.left = pos + 'px';
+                    // Когда уехал за правый край - прячем
+                    if (pos > window.innerWidth + 300) {
+                        clearInterval(this.truckInterval);
+                        truckDiv.style.left = '-350px';
+                    }
+                }, 20);
+                
+                // Автоматическая остановка через 8 секунд (на случай, если не доехал)
+                setTimeout(() => {
+                    if (this.truckInterval) {
+                        clearInterval(this.truckInterval);
+                        truckDiv.style.left = '-350px';
+                    }
+                }, 8000);
+            }
+        }
+    });
+</script>
+</body>
+</html>
