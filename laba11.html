@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>CoffeeShop - магазин кофе с доставкой</title>
+    <title> CoffeeShop - Доставка кофе</title>
+    
     <style>
         /*ОБЩИЙ СТИЛЬ И АДАПТИВНОСТЬ  */
         * {
@@ -272,6 +273,31 @@
                 font-size: 14px;
             }
         }
+        /* Анимация карточек */
+.product-card {
+    transition: all 0.3s ease;
+}
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(93,58,26,0.15);
+}
+
+/* Анимация кнопок */
+.add-to-cart {
+    transition: all 0.3s ease;
+}
+.add-to-cart:hover {
+    transform: scale(1.05);
+}
+
+/* Анимация корзины */
+.cart-content {
+    animation: slideIn 0.4s ease;
+}
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
     </style>
 </head>
 <body>
